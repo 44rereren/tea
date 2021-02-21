@@ -26,7 +26,7 @@ def write(path, img):
 # see http://image-net.org/archive/words.txt
 classes = {"apple": "n07739125", "banana": "n07753592", "orange": "n07747607"}
 offset = 0
-max = 1000
+max = 300
 for dir, id in classes.items():
     print(dir)
     os.makedirs(dir, exist_ok=True)

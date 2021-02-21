@@ -45,7 +45,7 @@ for idx, cat in enumerate(categories):
         allfiles.append((idx, f))
 
 random.shuffle(allfiles)
-# print("allfilesの数：" + str(len(allfiles)))
+print("allfilesの数：" + str(len(allfiles)))
 th = math.floor(len(allfiles) * 0.8)
 train = allfiles[0:th]
 test = allfiles[th:]
