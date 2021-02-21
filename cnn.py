@@ -28,14 +28,20 @@ def make_sample(files):
 def add_sample(cat, fname):
     img = Image.open(fname)
     img = img.convert("RGB")
-    img = img.resize((150, 150))
+    img = img.resize((input_size, input_size))
     # ２次元を１次元に変換していると思う。多分、asarrayにすることでメモリを共有するから、arrayより早いのか？
     data = np.asarray(img)
     X.append(data)
     Y.append(cat)
 
 
+# image = Image.open("apple/356141168_997d785cb0.jpg")
+# image = image.convert("RGB")
+# image = image.resize((150, 150))
+# image.show()
+
 allfiles = []
+input_size = 150
 
 for idx, cat in enumerate(categories):
     image_dir = cat
@@ -46,7 +52,7 @@ for idx, cat in enumerate(categories):
 
 random.shuffle(allfiles)
 print("allfilesの数：" + str(len(allfiles)))
-th = math.floor(len(allfiles) * 0.8)
+th = math.floor(len(allfiles) * 0.7)
 train = allfiles[0:th]
 test = allfiles[th:]
 X_train, y_train = make_sample(train)
@@ -56,7 +62,8 @@ xy = (X_train, X_test, y_train, y_test)
 
 
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation="relu", input_shape=(150, 150, 3)))
+model.add(layers.Conv2D(32, (3, 3), activation="relu",
+                        input_shape=(input_size, input_size, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation="relu"))
 model.add(layers.MaxPooling2D((2, 2)))
@@ -65,6 +72,7 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(128, (3, 3), activation="relu"))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
+model.add(layers.Dropout(0.6))
 model.add(layers.Dense(512, activation="relu"))
 model.add(layers.Dense(3, activation="sigmoid"))
 
@@ -82,7 +90,7 @@ nb_classes = len(categories)
 y_train = np_utils.to_categorical(y_train, nb_classes)
 y_test = np_utils.to_categorical(y_test, nb_classes)
 
-model = model.fit(X_train, y_train, epochs=10, batch_size=6,
+model = model.fit(X_train, y_train, epochs=20, batch_size=8,
                   validation_data=(X_test, y_test))
 
 
