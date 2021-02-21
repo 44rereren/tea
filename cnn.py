@@ -84,3 +84,35 @@ y_test = np_utils.to_categorical(y_test, nb_classes)
 
 model = model.fit(X_train, y_train, epochs=10, batch_size=6,
                   validation_data=(X_test, y_test))
+
+
+acc = model.history['acc']
+val_acc = model.history['val_acc']
+loss = model.history['loss']
+val_loss = model.history['val_loss']
+
+epochs = range(len(acc))
+
+plt.plot(epochs, acc, 'bo', label='Training acc')
+plt.plot(epochs, val_acc, 'b', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.legend()
+plt.savefig('acc')
+
+plt.figure()
+
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
+plt.savefig('loss')
+
+json_string = model.model.to_json()
+open("tea_predict.json", "w").write(json_string)  # ここの相対パスじゃないとダメ。
+
+hdf5_file = "tea_predict.hdf5"
+model.model.save_weights(hdf5_file)  # ここの相対パスじゃないとダメ。
+
+
+score = model.model.evaluate(X_test, y_test)
+print("正解率：" + str(score[1]))
